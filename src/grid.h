@@ -19,11 +19,9 @@ typedef struct Grid {
 	GridEntity mat[GRID_HEIGHT][GRID_WIDTH];	
 } Grid;
 
-extern Grid* g_grid;
+Grid* Grid_Init();
+void Grid_SetWall(Grid* grid, Mouse* mouse);
 
-void Grid_Init();
-void Grid_SetWall(Mouse* mouse);
-
-void Grid_PrintGrid();
+void Grid_PrintGrid(Grid* grid);
 
 #endif // GRID_H

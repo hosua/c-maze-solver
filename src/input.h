@@ -10,13 +10,11 @@
 
 typedef struct Mouse Mouse;
 
-extern Mouse* g_mouse;
+Mouse* Mouse_Init();
+void Mouse_UpdatePos(Mouse* mouse);
+void Mouse_PrintPos(Mouse* mouse);
+void Mouse_PrintGridPos(Mouse* mouse);
 
-void Mouse_Init();
-void Mouse_UpdatePos();
-void Mouse_PrintPos();
-void Mouse_PrintGridPos();
-
-Coord Mouse_GetGridPos();
+Coord Mouse_GetGridPos(Mouse* mouse);
 
 #endif // INPUT_H

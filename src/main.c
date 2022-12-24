@@ -7,78 +7,79 @@
 
 #include "global_defines.h"
 
+void gameLoop(GFX* gfx, bool* is_running){
+	// Initialize everything
+	Grid* grid = Grid_Init();
+	Mouse* mouse = Mouse_Init();
+	SDL_Cursor* cursor = GFX_InitCursor(cursor_img);
+	SDL_SetCursor(cursor);
 
-void gameLoop(bool* is_running){
-	initEverything();
-
-	GFX_ClearScreen();
-	GFX_SetGridTheme();
-
-	SDL_Surface* window_surface = SDL_GetWindowSurface(g_gfx->window);
-
-	if (!window_surface){
-		fprintf(stderr, "Failed to get surface from window.\n");
-		fprintf(stderr, "SDL2 Error: %s", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-
+	GFX_ClearScreen(gfx);
+	GFX_SetGridTheme(gfx);
+	// Game loop
 	while (is_running){
-		GFX_ClearScreen();
-		GFX_DrawGrid();
+		GFX_ClearScreen(gfx);
+		GFX_DrawGrid(gfx, grid);
 		SDL_Event event;
 		while (SDL_PollEvent(&event)){
 			switch(event.type){
 				case SDL_KEYDOWN:
 					switch(event.key.keysym.sym){
 						case SDLK_ESCAPE:
-							quitEverything();
+							GFX_CleanQuit(gfx, true);
 							break;
 					}
 					break;
 				case SDL_MOUSEMOTION:
-					Mouse_UpdatePos();
-					GFX_SetGridCursorGhost(event);
-					if (!g_mouse->active){
-						g_mouse->active = SDL_TRUE;
+					Mouse_UpdatePos(mouse);
+					GFX_SetGridCursorGhost(gfx, event);
+					if (!mouse->active){
+						mouse->active = SDL_TRUE;
 					}
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 				{
-					Mouse_PrintGridPos();
-					Grid_SetWall(g_mouse);
-					Grid_PrintGrid();
+					Mouse_PrintGridPos(mouse);
+					Grid_SetWall(grid, mouse);
+					Grid_PrintGrid(grid);
 					break;
 				}
 				case SDL_WINDOWEVENT:
-					if (event.window.event == SDL_WINDOWEVENT_ENTER && !g_mouse->hover)
-						g_mouse->hover = SDL_TRUE;
-					else if (event.window.event == SDL_WINDOWEVENT_LEAVE &&g_mouse->hover)
-						g_mouse->hover = SDL_FALSE;
+					if (event.window.event == SDL_WINDOWEVENT_ENTER && !mouse->hover)
+						mouse->hover = SDL_TRUE;
+					else if (event.window.event == SDL_WINDOWEVENT_LEAVE &&mouse->hover)
+						mouse->hover = SDL_FALSE;
 					break;
 				case SDL_QUIT:
 					is_running = false;
-					quitEverything();
+					GFX_CleanQuit(gfx, true);
 					break;
 				default:
 					break;
 			}
-			// SDL_UpdateWindowSurface(_gfx->window);
 		}
 
 		// Highlight the cell in the grid matrix where the mouse is hovering	
-		if (g_mouse->active && g_mouse->hover){
-			GFX_DrawGridCursorGhost(g_mouse);
+		if (mouse->active && mouse->hover){
+			GFX_DrawGridCursorGhost(gfx);
 		}
 
-		SDL_RenderPresent(g_gfx->renderer);
+		SDL_RenderPresent(gfx->renderer);
 	}	
 }
 
 
 int main(){
 	bool is_running = true;
-	gameLoop(&is_running);	
+	if (SDL_Init(SDL_INIT_EVERYTHING)){
+		fprintf(stderr, "Fatal error: Failed to initialize SDL: %s\n", SDL_GetError());
+		exit(EXIT_SUCCESS);
+	}
+
+	GFX* gfx = GFX_Init();
+
+	gameLoop(gfx, &is_running);	
 	
-	quitEverything();
+	GFX_CleanQuit(gfx, true);
 	return EXIT_SUCCESS;
 }

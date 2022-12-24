@@ -1,23 +1,22 @@
 #include "graphics.h"
 #include "grid.h"
 
-Grid* g_grid = NULL;
-
-void Grid_Init(){
-	g_grid = (Grid*)malloc(sizeof(Grid));
-	memset(g_grid->mat, 0, sizeof(g_grid->mat));
+Grid* Grid_Init(){
+	Grid* grid = (Grid*)malloc(sizeof(Grid));
+	memset(grid->mat, 0, sizeof(grid->mat));
+	return grid;
 }
 
-void Grid_SetWall(Mouse* mouse){
-	g_grid->mat[mouse->grid_pos.y][mouse->grid_pos.x] = G_WALL;
+void Grid_SetWall(Grid* grid, Mouse* mouse){
+	grid->mat[mouse->grid_pos.y][mouse->grid_pos.x] = G_WALL;
 }
 
 // Purely for debugging
-void Grid_PrintGrid(){
+void Grid_PrintGrid(Grid* grid){
 	printf("_________________________________\n");
 	for (int y = 0; y < GRID_HEIGHT; y++){
 		for (int x = 0; x < GRID_WIDTH; x++){
-			GridEntity ent = g_grid->mat[y][x];
+			GridEntity ent = grid->mat[y][x];
 			switch(ent){
 				case G_NONE:
 					printf(" ");

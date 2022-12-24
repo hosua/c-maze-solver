@@ -1,49 +1,30 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include <SDL2/SDL_scancode.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_ttf.h>
-
 #include "stdbool.h"
 #include "grid.h"
 #include "global_defines.h"
-
-typedef struct GFX {
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	SDL_Texture* texture;
-	SDL_Rect grid_cursor;
-	SDL_Rect grid_cursor_ghost;
-	TTF_Font* font; // unused fonts for now
-} GFX;
-
-extern const char *arrow[]; // image for our custom cursor
+							
 SDL_Cursor* GFX_InitCursor(const char *image[]);
 
-extern SDL_Cursor* g_cursor;
-extern GFX* g_gfx;
-
-extern GridColors* g_grid_colors;
-
-void GFX_SetGridTheme();
+void GFX_SetGridTheme(GFX* gfx);
 
 // Initializes everything graphics related
-bool GFX_Init();
+GFX* GFX_Init();
+void GFX_CleanQuit(GFX* gfx, bool success);
+
+// Render everything black
+void GFX_ClearScreen(GFX* gfx);
 
 // Initialize Grid Cursor
-void GFX_InitGridCursor();
+void GFX_InitGridCursor(GFX* gfx);
 // Initialize Grid Cursor ghost
-void GFX_InitGridCursorGhost();
+void GFX_InitGridCursorGhost(GFX* gfx);
 
 // Set Grid Cursor 
-void GFX_SetGridCursor(SDL_Event event);
-void GFX_SetGridCursorGhost(SDL_Event event);
-
-void GFX_ClearScreen();
-void GFX_DrawGrid();
-void GFX_DrawGridCursorGhost();
+void GFX_SetGridCursor(GFX* gfx, SDL_Event event);
+void GFX_SetGridCursorGhost(GFX* gfx, SDL_Event event);
+void GFX_DrawGrid(GFX* gfx, Grid* grid);
+void GFX_DrawGridCursorGhost(GFX* gfx);
 
 #endif // GRAPHICS_H
