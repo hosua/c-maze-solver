@@ -70,8 +70,8 @@ GFX* GFX_Init(){
 		GFX_CleanQuit(gfx, false);
 	}
 
-	GFX_InitGridCursor(gfx);
-	GFX_InitGridCursorGhost(gfx);
+	GFX_InitMazeCursor(gfx);
+	GFX_InitMazeCursorGhost(gfx);
 	return gfx;
 }
 
@@ -122,14 +122,14 @@ void GFX_SetSDLColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a, SDL_Color* colo
 	color->a = a;
 }
 
-void GFX_SetGridTheme(GFX* gfx){
+void GFX_SetMazeTheme(GFX* gfx){
 	// Dark theme
-	GFX_SetSDLColor(22,22,22,255, &gfx->grid_colors.bg);
-	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors.line); 
-	GFX_SetSDLColor(44,44,44,125, &gfx->grid_colors.cursor_ghost); 
-	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors.cursor);
-	GFX_SetSDLColor(20,105,175,255, &gfx->grid_colors.player);
-	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors.wall);
+	GFX_SetSDLColor(22,22,22,255, &gfx->maze_colors.bg);
+	GFX_SetSDLColor(44,44,44,255, &gfx->maze_colors.line); 
+	GFX_SetSDLColor(44,44,44,125, &gfx->maze_colors.cursor_ghost); 
+	GFX_SetSDLColor(255,255,255,255, &gfx->maze_colors.cursor);
+	GFX_SetSDLColor(20,105,175,255, &gfx->maze_colors.player);
+	GFX_SetSDLColor(255,255,255,255, &gfx->maze_colors.wall);
 }
 
 void GFX_ClearScreen(GFX* gfx){
@@ -137,18 +137,18 @@ void GFX_ClearScreen(GFX* gfx){
 	SDL_RenderClear(gfx->renderer);
 }
 
-void GFX_DrawGrid(GFX* gfx, Grid* grid){
+void GFX_DrawMaze(GFX* gfx, Maze* maze){
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors.bg.r, gfx->grid_colors.bg.g, gfx->grid_colors.bg.b,
-			gfx->grid_colors.bg.a);
+			gfx->maze_colors.bg.r, gfx->maze_colors.bg.g, gfx->maze_colors.bg.b,
+			gfx->maze_colors.bg.a);
 
 	SDL_RenderClear(gfx->renderer);
 
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors.line.r, gfx->grid_colors.line.g, gfx->grid_colors.line.b,
-			gfx->grid_colors.line.a);
+			gfx->maze_colors.line.r, gfx->maze_colors.line.g, gfx->maze_colors.line.b,
+			gfx->maze_colors.line.a);
 
-	// Render grid lines
+	// Render maze lines
 	for (int x = 0; x < SCREEN_X; x += GRID_CELL_SIZE){
 		SDL_RenderDrawLine(gfx->renderer, x, 0, x, SCREEN_Y);
 	}
@@ -157,12 +157,12 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 		SDL_RenderDrawLine(gfx->renderer, 0, y, SCREEN_X, y);
 	}
 
-	SDL_Rect grid_wall_rects[GRID_WIDTH*GRID_HEIGHT];
+	SDL_Rect maze_wall_rects[GRID_WIDTH*GRID_HEIGHT];
 	int ent_rects_count = 0;
-	// Gather everything on the grid matrix into wall rect array
+	// Gather everything on the maze matrix into wall rect array
 	for (int y = 0; y < GRID_HEIGHT; y++){
 		for (int x = 0; x < GRID_WIDTH; x++){
-			GridEntity ent = grid->matrix[y][x];
+			MazeEntity ent = maze->matrix[y][x];
 			switch(ent){
 				case G_NONE:
 					break;
@@ -174,7 +174,7 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 						.w = GRID_CELL_SIZE,
 						.h = GRID_CELL_SIZE
 					};
-					grid_wall_rects[ent_rects_count++] = wall_rect;
+					maze_wall_rects[ent_rects_count++] = wall_rect;
 					break;
 				}
 				case G_PLAYER:
@@ -185,8 +185,8 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 					gfx->player.h = GRID_CELL_SIZE;
 					// Render the player
 					SDL_SetRenderDrawColor(gfx->renderer, 
-							gfx->grid_colors.player.r, gfx->grid_colors.player.g, gfx->grid_colors.player.b,
-							gfx->grid_colors.player.a);
+							gfx->maze_colors.player.r, gfx->maze_colors.player.g, gfx->maze_colors.player.b,
+							gfx->maze_colors.player.a);
 					SDL_RenderFillRect(gfx->renderer, &gfx->player);
 					break;
 				}
@@ -198,41 +198,37 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 
 	// Render the contents in the wall rect array
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors.wall.r, gfx->grid_colors.wall.g, gfx->grid_colors.wall.b,
-			gfx->grid_colors.wall.a);
-	SDL_RenderFillRects(gfx->renderer, grid_wall_rects, ent_rects_count);
+			gfx->maze_colors.wall.r, gfx->maze_colors.wall.g, gfx->maze_colors.wall.b,
+			gfx->maze_colors.wall.a);
+	SDL_RenderFillRects(gfx->renderer, maze_wall_rects, ent_rects_count);
 
 }
 
-// Set Grid Cursor's initial state
-void GFX_InitGridCursor(GFX* gfx){
-	gfx->grid_cursor.x = (GRID_WIDTH-1)/2 * GRID_CELL_SIZE;
-	gfx->grid_cursor.y = (GRID_HEIGHT-1)/2 * GRID_CELL_SIZE;
-	gfx->grid_cursor.w = GRID_CELL_SIZE;
-	gfx->grid_cursor.h = GRID_CELL_SIZE;
+// Set Maze Cursor's initial state
+void GFX_InitMazeCursor(GFX* gfx){
+	gfx->maze_cursor.x = (GRID_WIDTH-1)/2 * GRID_CELL_SIZE;
+	gfx->maze_cursor.y = (GRID_HEIGHT-1)/2 * GRID_CELL_SIZE;
+	gfx->maze_cursor.w = GRID_CELL_SIZE;
+	gfx->maze_cursor.h = GRID_CELL_SIZE;
 }
 
-// Set Grid Cursor Ghost's initial state
-void GFX_InitGridCursorGhost(GFX* gfx){
-	gfx->grid_cursor_ghost.x = gfx->grid_cursor.x;
-	gfx->grid_cursor_ghost.y = gfx->grid_cursor.y;
-	gfx->grid_cursor_ghost.w = gfx->grid_cursor.w;
-	gfx->grid_cursor_ghost.h = gfx->grid_cursor.h;
+// Set Maze Cursor Ghost's initial state
+void GFX_InitMazeCursorGhost(GFX* gfx){
+	gfx->maze_cursor_ghost.x = gfx->maze_cursor.x;
+	gfx->maze_cursor_ghost.y = gfx->maze_cursor.y;
+	gfx->maze_cursor_ghost.w = gfx->maze_cursor.w;
+	gfx->maze_cursor_ghost.h = gfx->maze_cursor.h;
 }
 
-void GFX_SetGridCursorGhost(GFX* gfx, SDL_Event event){
-	// set the cursor ghost to mouse position
-	gfx->grid_cursor_ghost.x = (event.motion.x / GRID_CELL_SIZE) * GRID_CELL_SIZE;
-	gfx->grid_cursor_ghost.y = (event.motion.y / GRID_CELL_SIZE) * GRID_CELL_SIZE;
-}
-// Highlight the grid at where the user's mouse is hovering	
-void GFX_DrawGridCursorGhost(GFX* gfx){
+// Highlight the maze at where the user's mouse is hovering	
+void GFX_DrawMazeCursorGhost(GFX* gfx, Mouse* mouse){
+	printf("Drawing maze cursor ghost\n");
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors.cursor_ghost.r,
-			gfx->grid_colors.cursor_ghost.g,
-			gfx->grid_colors.cursor_ghost.b,
-			gfx->grid_colors.cursor_ghost.a);
-	SDL_RenderFillRect(gfx->renderer, &gfx->grid_cursor_ghost);
+			gfx->maze_colors.cursor_ghost.r,
+			gfx->maze_colors.cursor_ghost.g,
+			gfx->maze_colors.cursor_ghost.b,
+			gfx->maze_colors.cursor_ghost.a);
+	SDL_RenderFillRect(gfx->renderer, &gfx->maze_cursor_ghost);
 }
 
 

@@ -2,36 +2,37 @@
 #include "input.h"
 #include "graphics.h"
 #include "maze.h"
-#include "grid.h"
 
 void gameLoop(GFX* gfx, bool* is_running){
 	// Initialize everything
-	Grid* grid = Grid_Init();
+	Maze* maze = Maze_Init();
 	Mouse* mouse = Mouse_Init();
-	Grid_SetPlayerStart(grid);
+	Maze_SetPlayerStart(maze);
 
 	SDL_Cursor* cursor = GFX_InitCursor(cursor_img);
 	SDL_SetCursor(cursor);
 
 	GFX_ClearScreen(gfx);
-	GFX_SetGridTheme(gfx);
+	GFX_SetMazeTheme(gfx);
 
-	Grid_SetPlayer(grid);
+	Maze_SetPlayer(maze);
 
 	// Game loop
 	while (is_running){
 		GFX_ClearScreen(gfx);
 		SDL_Event event;
+
+		GFX_DrawMaze(gfx, maze);
+
 		while (SDL_PollEvent(&event)){
-			InputHandler(gfx, mouse, grid, is_running, event);
+			InputHandler(gfx, mouse, maze, is_running, event);
 		}
-		// Highlight the cell in the grid matrix where the mouse is hovering	
+		// Highlight the cell in the maze matrix where the mouse is hovering	
 		if (mouse->active && mouse->hover){
-			GFX_DrawGridCursorGhost(gfx);
+			GFX_DrawMazeCursorGhost(gfx, mouse);
 		}
-		GFX_DrawGrid(gfx, grid);
 		SDL_RenderPresent(gfx->renderer);
-		// Grid_Print(grid); // For debugging 
+		// Maze_Print(maze); // For debugging 
 	}	
 }
 

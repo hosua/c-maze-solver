@@ -1,6 +1,6 @@
 #include "input.h"
 #include "graphics.h"
-#include "grid.h"
+#include "maze.h"
 #include "global_declarations.h"
 
 Mouse* Mouse_Init(){
@@ -11,48 +11,54 @@ Mouse* Mouse_Init(){
 
 void Mouse_UpdatePos(Mouse* mouse){
 	SDL_GetMouseState(&mouse->pos.x, &mouse->pos.y); // Relative to Window
-	mouse->grid_pos.x = (mouse->pos.x / GRID_CELL_SIZE);
-	mouse->grid_pos.y = (mouse->pos.y / GRID_CELL_SIZE);
+	mouse->maze_pos.x = (mouse->pos.x / GRID_CELL_SIZE);
+	mouse->maze_pos.y = (mouse->pos.y / GRID_CELL_SIZE);
 
 	// Ensure that coordinates stay in bounds
-	if (mouse->grid_pos.x == GRID_WIDTH)
-		mouse->grid_pos.x--;
-	if (mouse->grid_pos.y == GRID_HEIGHT)
-		mouse->grid_pos.y--;
+	if (mouse->maze_pos.x == GRID_WIDTH)
+		mouse->maze_pos.x--;
+	if (mouse->maze_pos.y == GRID_HEIGHT)
+		mouse->maze_pos.y--;
 }
 
 void Mouse_PrintPos(Mouse* mouse){
 	printf("Mouse pos: (%i,%i)\n", mouse->pos.x, mouse->pos.y);
 }
 
-// returns grid coordinate based on mouse position
-Coord Mouse_GetGridPos(Mouse* mouse){
-	return mouse->grid_pos;
+// returns maze coordinate based on mouse position
+Coord Mouse_GetMazePos(Mouse* mouse){
+	return mouse->maze_pos;
 }
-void Mouse_PrintGridPos(Mouse* mouse){
-	fprintf(stdout, "Mouse grid position: (%i,%i)\n", mouse->grid_pos.x, mouse->grid_pos.y);
+
+void Mouse_SetCursorGhost(GFX* gfx, SDL_Event event){
+	// set the cursor ghost to mouse position
+	gfx->maze_cursor_ghost.x = (event.motion.x / GRID_CELL_SIZE) * GRID_CELL_SIZE;
+	gfx->maze_cursor_ghost.y = (event.motion.y / GRID_CELL_SIZE) * GRID_CELL_SIZE;
+}
+void Mouse_PrintMazePos(Mouse* mouse){
+	fprintf(stdout, "Mouse maze position: (%i,%i)\n", mouse->maze_pos.x, mouse->maze_pos.y);
 }
 
 // Handles keyboard and mouse events
-void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Event event){
+void InputHandler(GFX* gfx, Mouse* mouse, Maze* maze, bool* is_running, SDL_Event event){
 	switch(event.type){
 		case SDL_KEYDOWN:
 			switch(event.key.keysym.sym){
 				case SDLK_w: case SDLK_UP:
-					Grid_MovePlayer(grid, P_UP);
+					Maze_MovePlayer(maze, P_UP);
 					break;
 				case SDLK_s: case SDLK_DOWN:
-					Grid_MovePlayer(grid, P_DOWN);
+					Maze_MovePlayer(maze, P_DOWN);
 					break;
 				case SDLK_a: case SDLK_LEFT:
-					Grid_MovePlayer(grid, P_LEFT);
+					Maze_MovePlayer(maze, P_LEFT);
 					break;
 				case SDLK_d: case SDLK_RIGHT:
-					Grid_MovePlayer(grid, P_RIGHT);
+					Maze_MovePlayer(maze, P_RIGHT);
 					break;
 				case SDLK_r:
-					Grid_Reset(grid);
-					GFX_DrawGrid(gfx, grid);
+					Maze_Reset(maze);
+					GFX_DrawMaze(gfx, maze);
 					break;
 				case SDLK_ESCAPE:
 					GFX_CleanQuit(gfx, true);
@@ -61,7 +67,7 @@ void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Even
 			break;
 		case SDL_MOUSEMOTION:
 			Mouse_UpdatePos(mouse);
-			GFX_SetGridCursorGhost(gfx, event);
+			Mouse_SetCursorGhost(gfx, event);
 			if (!mouse->active)
 				mouse->active = SDL_TRUE;
 			break;
@@ -85,14 +91,14 @@ void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Even
 			break;
 	}
 	if (mouse->is_down){
-		// Mouse_PrintGridPos(mouse);
+		// Mouse_PrintMazePos(mouse);
 		switch(event.button.button){
 			case SDL_BUTTON_LEFT:
-				Grid_SetWall(grid, mouse);
+				Maze_SetWall(maze, mouse);
 				break;
 			// TODO: Figure out why the hell holding mouse button down works for right but not left
 			case SDL_BUTTON_RIGHT:
-				Grid_UnsetWall(grid, mouse);
+				Maze_UnsetWall(maze, mouse);
 				break;
 			default:
 				break;

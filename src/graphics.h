@@ -2,11 +2,22 @@
 #define GRAPHICS_H
 
 #include "global_declarations.h"
-#include "grid.h"
+#include "maze.h"
+
+typedef struct GFX GFX;
+// MazeColors maze_colors;
+// SDL_Window* window;
+// SDL_Surface* window_surface; // TODO: Unused, maybe remove this
+// SDL_Renderer* renderer;
+// SDL_Texture* texture;
+// SDL_Rect maze_cursor;
+// SDL_Rect maze_cursor_ghost;
+// SDL_Rect player;
+// TTF_Font* font; // unused fonts for now
 							
 SDL_Cursor* GFX_InitCursor(const char *image[]);
 
-void GFX_SetGridTheme(GFX* gfx);
+void GFX_SetMazeTheme(GFX* gfx);
 
 // Initializes everything graphics related
 GFX* GFX_Init();
@@ -15,15 +26,14 @@ void GFX_CleanQuit(GFX* gfx, bool success);
 // Render everything black
 void GFX_ClearScreen(GFX* gfx);
 
-// Initialize Grid Cursor
-void GFX_InitGridCursor(GFX* gfx);
-// Initialize Grid Cursor ghost
-void GFX_InitGridCursorGhost(GFX* gfx);
+// Initialize Maze Cursor
+void GFX_InitMazeCursor(GFX* gfx);
+// Initialize Maze Cursor ghost
+void GFX_InitMazeCursorGhost(GFX* gfx);
 
-// Set Grid Cursor 
-void GFX_SetGridCursor(GFX* gfx, SDL_Event event);
-void GFX_SetGridCursorGhost(GFX* gfx, SDL_Event event);
-void GFX_DrawGrid(GFX* gfx, Grid* grid);
-void GFX_DrawGridCursorGhost(GFX* gfx);
+// Set Maze Cursor 
+void GFX_SetMazeCursor(GFX* gfx, SDL_Event event);
+void GFX_DrawMaze(GFX* gfx, Maze* maze);
+void GFX_DrawMazeCursorGhost(GFX* gfx, Mouse* mouse);
 
 #endif // GRAPHICS_H

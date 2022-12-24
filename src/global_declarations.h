@@ -24,27 +24,27 @@ typedef struct Coord {
 
 typedef struct Mouse {
 	Coord pos; // actual raw position relative to window
-	Coord grid_pos; // position on the grid
+	Coord maze_pos; // position on the maze
 	SDL_bool active;
 	SDL_bool hover;
 	SDL_bool is_down; // true while mouse button is held down
 } Mouse;
 
-typedef struct GridColors {
+typedef struct MazeColors {
 	SDL_Color bg;
 	SDL_Color cursor;
 	SDL_Color cursor_ghost;
 	SDL_Color line;
 	SDL_Color player;
 	SDL_Color wall;
-} GridColors;
+} MazeColors;
 
-// Types of entities on the grid
-typedef enum GridEntity {
+// Types of entities on the maze
+typedef enum MazeEntity {
 	G_NONE,
 	G_WALL,
 	G_PLAYER,
-} GridEntity;
+} MazeEntity;
 
 typedef enum PlayerMove {
 	P_UP,
@@ -54,22 +54,22 @@ typedef enum PlayerMove {
 } PlayerMove;
 
 typedef struct Player {
-	Coord pos; // player's postion on grid
+	Coord pos; // player's postion on maze
 } Player;
 
-typedef struct Grid {
-	GridEntity matrix[GRID_HEIGHT][GRID_WIDTH];	
+typedef struct Maze {
+	MazeEntity matrix[GRID_HEIGHT][GRID_WIDTH];	
 	Player player;
-} Grid;
+} Maze;
 
 typedef struct GFX {
-	GridColors grid_colors;
+	MazeColors maze_colors;
 	SDL_Window* window;
 	SDL_Surface* window_surface; // TODO: Unused, maybe remove this
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
-	SDL_Rect grid_cursor;
-	SDL_Rect grid_cursor_ghost;
+	SDL_Rect maze_cursor;
+	SDL_Rect maze_cursor_ghost;
 	SDL_Rect player;
 	TTF_Font* font; // unused fonts for now
 } GFX;
