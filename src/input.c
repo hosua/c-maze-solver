@@ -50,6 +50,10 @@ void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Even
 				case SDLK_d: case SDLK_RIGHT:
 					Grid_MovePlayer(grid, P_RIGHT);
 					break;
+				case SDLK_r:
+					Grid_Reset(grid);
+					GFX_DrawGrid(gfx, grid);
+					break;
 				case SDLK_ESCAPE:
 					GFX_CleanQuit(gfx, true);
 					break;
@@ -58,17 +62,14 @@ void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Even
 		case SDL_MOUSEMOTION:
 			Mouse_UpdatePos(mouse);
 			GFX_SetGridCursorGhost(gfx, event);
-			if (!mouse->active){
+			if (!mouse->active)
 				mouse->active = SDL_TRUE;
-			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			if (!mouse->is_down)
-				mouse->is_down = SDL_TRUE;
+			mouse->is_down = SDL_TRUE;
 			break;
 		case SDL_MOUSEBUTTONUP:
-			if (mouse->is_down)
-				mouse->is_down = SDL_FALSE;
+			mouse->is_down = SDL_FALSE;
 			break;
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_ENTER && !mouse->hover)
@@ -83,7 +84,6 @@ void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Even
 		default:
 			break;
 	}
-
 	if (mouse->is_down){
 		// Mouse_PrintGridPos(mouse);
 		switch(event.button.button){

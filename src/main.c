@@ -21,7 +21,6 @@ void gameLoop(GFX* gfx, bool* is_running){
 	// Game loop
 	while (is_running){
 		GFX_ClearScreen(gfx);
-		GFX_DrawGrid(gfx, grid);
 		SDL_Event event;
 		while (SDL_PollEvent(&event)){
 			InputHandler(gfx, mouse, grid, is_running, event);
@@ -30,8 +29,9 @@ void gameLoop(GFX* gfx, bool* is_running){
 		if (mouse->active && mouse->hover){
 			GFX_DrawGridCursorGhost(gfx);
 		}
+		GFX_DrawGrid(gfx, grid);
 		SDL_RenderPresent(gfx->renderer);
-		// Grid_Print(grid);
+		// Grid_Print(grid); // For debugging 
 	}	
 }
 

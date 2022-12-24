@@ -3,8 +3,17 @@
 
 Grid* Grid_Init(){
 	Grid* grid = (Grid*)malloc(sizeof(Grid));
-	memset(grid->matrix, 0, sizeof(grid->matrix));
+	memset(grid->matrix, G_NONE, sizeof(grid->matrix));
 	return grid;
+}
+
+void Grid_Reset(Grid* grid){
+	memset(grid->matrix, G_NONE, sizeof(grid->matrix));
+	Player* player = &grid->player;
+	Grid_SetPlayerStart(grid);
+	Grid_SetPlayer(grid);
+	grid->matrix[player->pos.y][player->pos.x] = G_PLAYER;	
+	fprintf(stdout, "Maze was reset.\n");
 }
 
 void Grid_SetPlayerStart(Grid* grid){

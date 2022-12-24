@@ -4,6 +4,7 @@
 #include "global_declarations.h"
 
 Grid* Grid_Init();
+void Grid_Reset(Grid* grid);
 
 void Grid_SetPlayerStart(Grid* grid);
 void Grid_SetPlayer(Grid* grid);
