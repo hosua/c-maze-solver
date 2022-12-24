@@ -3,7 +3,7 @@
 
 #include "stdbool.h"
 #include "grid.h"
-#include "global_defines.h"
+#include "global_declarations.h"
 							
 SDL_Cursor* GFX_InitCursor(const char *image[]);
 

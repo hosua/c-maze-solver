@@ -6,7 +6,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 
-#include "global_defines.h"
+#include "global_declarations.h"
 
 typedef struct Mouse Mouse;
 

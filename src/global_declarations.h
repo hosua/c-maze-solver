@@ -1,5 +1,5 @@
-#ifndef GLOBAL_DEF_H
-#define GLOBAL_DEF_H
+#ifndef GLOBAL_DEC_H
+#define GLOBAL_DEC_H
 
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL.h>
@@ -27,9 +27,10 @@ typedef struct Mouse {
 
 typedef struct GridColors {
 	SDL_Color bg;
-	SDL_Color line;
 	SDL_Color cursor;
 	SDL_Color cursor_ghost;
+	SDL_Color line;
+	SDL_Color player;
 	SDL_Color wall;
 } GridColors;
 
@@ -46,4 +47,4 @@ typedef struct GFX {
 
 extern const char *cursor_img[]; // image for our custom cursor
 
-#endif // GLOBAL_DEF_H
+#endif // GLOBAL_DEC_H

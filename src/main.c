@@ -5,7 +5,7 @@
 #include "maze.h"
 #include "grid.h"
 
-#include "global_defines.h"
+#include "global_declarations.h"
 
 void gameLoop(GFX* gfx, bool* is_running){
 	// Initialize everything

@@ -1,5 +1,5 @@
 #include "input.h"
-#include "global_defines.h"
+#include "global_declarations.h"
 
 Mouse* Mouse_Init(){
 	Mouse* mouse = (Mouse*)malloc(sizeof(Mouse));

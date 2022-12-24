@@ -5,7 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 
-#include "global_defines.h"
+#include "global_declarations.h"
 
 // Types of entities on the grid
 typedef enum GridEntity {
@@ -18,6 +18,10 @@ typedef struct Grid {
 	// Grid matrix
 	GridEntity mat[GRID_HEIGHT][GRID_WIDTH];	
 } Grid;
+
+typedef struct Player {
+	Coord pos; // player's postion on grid
+} Player;
 
 Grid* Grid_Init();
 void Grid_SetWall(Grid* grid, Mouse* mouse);
