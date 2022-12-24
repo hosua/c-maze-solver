@@ -34,7 +34,7 @@ typedef struct GridColors {
 } GridColors;
 
 typedef struct GFX {
-	GridColors* grid_colors;
+	GridColors grid_colors;
 	SDL_Window* window;
 	SDL_Surface* window_surface; // TODO: Unused, maybe remove this
 	SDL_Renderer* renderer;

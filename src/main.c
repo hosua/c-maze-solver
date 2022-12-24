@@ -41,7 +41,6 @@ void gameLoop(GFX* gfx, bool* is_running){
 				{
 					Mouse_PrintGridPos(mouse);
 					Grid_SetWall(grid, mouse);
-					Grid_PrintGrid(grid);
 					break;
 				}
 				case SDL_WINDOWEVENT:

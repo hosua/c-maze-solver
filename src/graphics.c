@@ -48,8 +48,6 @@ GFX* GFX_Init(){
 	gfx = (GFX*)malloc(sizeof(GFX));
 	memset(gfx, 0, sizeof(GFX));
 
-	gfx->grid_colors = (GridColors*)malloc(sizeof(GridColors));
-
 	gfx->window = SDL_CreateWindow("Maze", 
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED, 
@@ -126,11 +124,11 @@ void GFX_SetSDLColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a, SDL_Color* colo
 
 void GFX_SetGridTheme(GFX* gfx){
 	// Dark theme
-	GFX_SetSDLColor(22,22,22,255, &gfx->grid_colors->bg);
-	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors->line); 
-	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors->cursor_ghost); 
-	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors->cursor);
-	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors->wall);
+	GFX_SetSDLColor(22,22,22,255, &gfx->grid_colors.bg);
+	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors.line); 
+	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors.cursor_ghost); 
+	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors.cursor);
+	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors.wall);
 }
 
 void GFX_ClearScreen(GFX* gfx){
@@ -140,14 +138,14 @@ void GFX_ClearScreen(GFX* gfx){
 
 void GFX_DrawGrid(GFX* gfx, Grid* grid){
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors->bg.r, gfx->grid_colors->bg.g, gfx->grid_colors->bg.b,
-			gfx->grid_colors->bg.a);
+			gfx->grid_colors.bg.r, gfx->grid_colors.bg.g, gfx->grid_colors.bg.b,
+			gfx->grid_colors.bg.a);
 
 	SDL_RenderClear(gfx->renderer);
 
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors->line.r, gfx->grid_colors->line.g, gfx->grid_colors->line.b,
-			gfx->grid_colors->line.a);
+			gfx->grid_colors.line.r, gfx->grid_colors.line.g, gfx->grid_colors.line.b,
+			gfx->grid_colors.line.a);
 
 	// Render grid lines
 	for (int x = 0; x < SCREEN_X; x += GRID_CELL_SIZE){
@@ -189,8 +187,8 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 
 	// Render the contents in the wall rect array
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors->wall.r, gfx->grid_colors->wall.g, gfx->grid_colors->wall.b,
-			gfx->grid_colors->wall.a);
+			gfx->grid_colors.wall.r, gfx->grid_colors.wall.g, gfx->grid_colors.wall.b,
+			gfx->grid_colors.wall.a);
 	SDL_RenderFillRects(gfx->renderer, grid_wall_rects, ent_rects_count);
 }
 
@@ -218,10 +216,10 @@ void GFX_SetGridCursorGhost(GFX* gfx, SDL_Event event){
 // Highlight the grid at where the user's mouse is hovering	
 void GFX_DrawGridCursorGhost(GFX* gfx){
 	SDL_SetRenderDrawColor(gfx->renderer, 
-			gfx->grid_colors->cursor_ghost.r,
-			gfx->grid_colors->cursor_ghost.g,
-			gfx->grid_colors->cursor_ghost.b,
-			gfx->grid_colors->cursor_ghost.a);
+			gfx->grid_colors.cursor_ghost.r,
+			gfx->grid_colors.cursor_ghost.g,
+			gfx->grid_colors.cursor_ghost.b,
+			gfx->grid_colors.cursor_ghost.a);
 	SDL_RenderFillRect(gfx->renderer, &gfx->grid_cursor_ghost);
 }
 
