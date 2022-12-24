@@ -16,23 +16,24 @@ void gameLoop(GFX* gfx, bool* is_running){
 	GFX_SetMazeTheme(gfx);
 
 	Maze_SetPlayer(maze);
+	Maze_SetDefaultGoal(maze);
 
 	// Game loop
 	while (is_running){
 		GFX_ClearScreen(gfx);
 		SDL_Event event;
 
-		GFX_DrawMaze(gfx, maze);
+		GFX_RenderMaze(gfx, maze);
 
 		while (SDL_PollEvent(&event)){
 			InputHandler(gfx, mouse, maze, is_running, event);
 		}
 		// Highlight the cell in the maze matrix where the mouse is hovering	
 		if (mouse->active && mouse->hover){
-			GFX_DrawMazeCursorGhost(gfx, mouse);
+			GFX_RenderCursorGhost(gfx, mouse);
 		}
 		SDL_RenderPresent(gfx->renderer);
-		// Maze_Print(maze); // For debugging 
+		Maze_Print(maze); // For debugging 
 	}	
 }
 

@@ -6,6 +6,9 @@
 Maze* Maze_Init();
 void Maze_Reset(Maze* maze);
 
+void Maze_SetDefaultGoal(Maze* maze);
+void Maze_SetGoal(Maze* maze, Mouse* mouse);
+
 void Maze_SetPlayerStart(Maze* maze);
 void Maze_SetPlayer(Maze* maze);
 void Maze_MovePlayer(Maze* maze, PlayerMove move);

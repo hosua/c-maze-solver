@@ -12,6 +12,7 @@ void Maze_Reset(Maze* maze){
 	Player* player = &maze->player;
 	Maze_SetPlayerStart(maze);
 	Maze_SetPlayer(maze);
+	Maze_SetDefaultGoal(maze);
 	maze->matrix[player->pos.y][player->pos.x] = G_PLAYER;	
 	fprintf(stdout, "Maze was reset.\n");
 }
@@ -58,8 +59,7 @@ void Maze_SetPlayer(Maze* maze){
 void Maze_SetWall(Maze* maze, Mouse* mouse){
 	int x = mouse->maze_pos.x;
 	int y = mouse->maze_pos.y;
-	if ((maze->matrix[y][x] != G_PLAYER) &&
-			(maze->matrix[y][x] != G_WALL)){
+	if (maze->matrix[y][x] == G_NONE){
 		maze->matrix[mouse->maze_pos.y][mouse->maze_pos.x] = G_WALL;
 	}
 }
@@ -72,6 +72,27 @@ void Maze_UnsetWall(Maze* maze, Mouse* mouse){
 	int y = mouse->maze_pos.y;
 	if (maze->matrix[y][x] == G_WALL){
 		maze->matrix[y][x] = G_NONE;
+	}
+}
+void Maze_SetDefaultGoal(Maze* maze){
+	int x = GRID_WIDTH-1;
+	int y = GRID_HEIGHT/2;
+	maze->goal_pos.x = x;
+	maze->goal_pos.y = y;
+	maze->matrix[y][x] = G_GOAL;
+}
+void Maze_SetGoal(Maze* maze, Mouse* mouse){
+	int x = mouse->maze_pos.x;
+	int y = mouse->maze_pos.y;
+	printf("Setting goal to: (%i,%i)\n", x, y);
+	if (maze->matrix[y][x] != G_PLAYER
+			&& maze->matrix[y][x] != G_WALL){
+		// unset current goal
+		maze->matrix[maze->goal_pos.y][maze->goal_pos.x] = G_NONE;
+		maze->goal_pos.x = x;
+		maze->goal_pos.y = y;
+		// set new goal
+		maze->matrix[y][x] = G_GOAL;
 	}
 }
 
@@ -90,6 +111,9 @@ void Maze_Print(Maze* maze){
 					break;
 				case G_PLAYER:
 					printf("*");
+					break;
+				case G_GOAL:
+					printf("G");
 					break;
 				default:
 					fprintf(stderr, "Error: Unkown MazeEntity %i\n", ent);

@@ -16,6 +16,10 @@
 #define GRID_HEIGHT 20
 #define SCREEN_X (GRID_WIDTH * GRID_CELL_SIZE) + 1
 #define SCREEN_Y (GRID_HEIGHT * GRID_CELL_SIZE) + 1
+#define PQ_LIMIT GRID_WIDTH * GRID_HEIGHT // Priority queue limit
+
+// Generic swap
+#define swap(x, y) do { typeof(x) swap = x; x = y; y = swap; } while (0)
 
 typedef struct Coord {
 	int x;
@@ -34,6 +38,7 @@ typedef struct MazeColors {
 	SDL_Color bg;
 	SDL_Color cursor;
 	SDL_Color cursor_ghost;
+	SDL_Color goal;
 	SDL_Color line;
 	SDL_Color player;
 	SDL_Color wall;
@@ -44,6 +49,7 @@ typedef enum MazeEntity {
 	G_NONE,
 	G_WALL,
 	G_PLAYER,
+	G_GOAL,
 } MazeEntity;
 
 typedef enum PlayerMove {
@@ -59,6 +65,7 @@ typedef struct Player {
 
 typedef struct Maze {
 	MazeEntity matrix[GRID_HEIGHT][GRID_WIDTH];	
+	Coord goal_pos;
 	Player player;
 } Maze;
 
@@ -68,12 +75,24 @@ typedef struct GFX {
 	SDL_Surface* window_surface; // TODO: Unused, maybe remove this
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
-	SDL_Rect maze_cursor;
-	SDL_Rect maze_cursor_ghost;
+	SDL_Rect cursor; 
+	SDL_Rect cursor_ghost;
+	SDL_Rect goal;
 	SDL_Rect player;
 	TTF_Font* font; // unused fonts for now
 } GFX;
 
 extern const char *cursor_img[]; // image for our custom cursor
+
+// TODO: Change Priority Queue template to work with Maze data
+typedef struct PQ_Node {
+	int data;
+	int priority;
+} PQ_Node;
+
+typedef struct PriorityQueue {
+	PQ_Node queue[PQ_LIMIT];
+	int size;
+} PriorityQueue;
 
 #endif // GLOBAL_DEC_H

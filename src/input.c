@@ -32,8 +32,8 @@ Coord Mouse_GetMazePos(Mouse* mouse){
 
 void Mouse_SetCursorGhost(GFX* gfx, SDL_Event event){
 	// set the cursor ghost to mouse position
-	gfx->maze_cursor_ghost.x = (event.motion.x / GRID_CELL_SIZE) * GRID_CELL_SIZE;
-	gfx->maze_cursor_ghost.y = (event.motion.y / GRID_CELL_SIZE) * GRID_CELL_SIZE;
+	gfx->cursor_ghost.x = (event.motion.x / GRID_CELL_SIZE) * GRID_CELL_SIZE;
+	gfx->cursor_ghost.y = (event.motion.y / GRID_CELL_SIZE) * GRID_CELL_SIZE;
 }
 void Mouse_PrintMazePos(Mouse* mouse){
 	fprintf(stdout, "Mouse maze position: (%i,%i)\n", mouse->maze_pos.x, mouse->maze_pos.y);
@@ -56,9 +56,13 @@ void InputHandler(GFX* gfx, Mouse* mouse, Maze* maze, bool* is_running, SDL_Even
 				case SDLK_d: case SDLK_RIGHT:
 					Maze_MovePlayer(maze, P_RIGHT);
 					break;
+				case SDLK_g:
+					// Set new goal at mouse position
+					Maze_SetGoal(maze, mouse);
+					break;
 				case SDLK_r:
 					Maze_Reset(maze);
-					GFX_DrawMaze(gfx, maze);
+					GFX_RenderMaze(gfx, maze);
 					break;
 				case SDLK_ESCAPE:
 					GFX_CleanQuit(gfx, true);

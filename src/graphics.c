@@ -128,6 +128,7 @@ void GFX_SetMazeTheme(GFX* gfx){
 	GFX_SetSDLColor(44,44,44,255, &gfx->maze_colors.line); 
 	GFX_SetSDLColor(44,44,44,125, &gfx->maze_colors.cursor_ghost); 
 	GFX_SetSDLColor(255,255,255,255, &gfx->maze_colors.cursor);
+	GFX_SetSDLColor(18,184,38,255, &gfx->maze_colors.goal);
 	GFX_SetSDLColor(20,105,175,255, &gfx->maze_colors.player);
 	GFX_SetSDLColor(255,255,255,255, &gfx->maze_colors.wall);
 }
@@ -137,7 +138,8 @@ void GFX_ClearScreen(GFX* gfx){
 	SDL_RenderClear(gfx->renderer);
 }
 
-void GFX_DrawMaze(GFX* gfx, Maze* maze){
+/* GFX_RenderMaze() should always go before GFX_DrawCursorGhost(); */
+void GFX_RenderMaze(GFX* gfx, Maze* maze){
 	SDL_SetRenderDrawColor(gfx->renderer, 
 			gfx->maze_colors.bg.r, gfx->maze_colors.bg.g, gfx->maze_colors.bg.b,
 			gfx->maze_colors.bg.a);
@@ -177,6 +179,16 @@ void GFX_DrawMaze(GFX* gfx, Maze* maze){
 					maze_wall_rects[ent_rects_count++] = wall_rect;
 					break;
 				}
+				case G_GOAL:
+					gfx->goal.x = (x * GRID_CELL_SIZE);
+					gfx->goal.y = (y * GRID_CELL_SIZE);
+					gfx->goal.w = GRID_CELL_SIZE;
+					gfx->goal.h = GRID_CELL_SIZE;
+					SDL_SetRenderDrawColor(gfx->renderer, 
+							gfx->maze_colors.goal.r, gfx->maze_colors.goal.g, gfx->maze_colors.goal.b,
+							gfx->maze_colors.goal.a);
+					SDL_RenderFillRect(gfx->renderer, &gfx->goal);
+				break;
 				case G_PLAYER:
 				{
 					gfx->player.x = (x * GRID_CELL_SIZE);
@@ -206,29 +218,28 @@ void GFX_DrawMaze(GFX* gfx, Maze* maze){
 
 // Set Maze Cursor's initial state
 void GFX_InitMazeCursor(GFX* gfx){
-	gfx->maze_cursor.x = (GRID_WIDTH-1)/2 * GRID_CELL_SIZE;
-	gfx->maze_cursor.y = (GRID_HEIGHT-1)/2 * GRID_CELL_SIZE;
-	gfx->maze_cursor.w = GRID_CELL_SIZE;
-	gfx->maze_cursor.h = GRID_CELL_SIZE;
+	gfx->cursor.x = (GRID_WIDTH-1)/2 * GRID_CELL_SIZE;
+	gfx->cursor.y = (GRID_HEIGHT-1)/2 * GRID_CELL_SIZE;
+	gfx->cursor.w = GRID_CELL_SIZE;
+	gfx->cursor.h = GRID_CELL_SIZE;
 }
 
 // Set Maze Cursor Ghost's initial state
 void GFX_InitMazeCursorGhost(GFX* gfx){
-	gfx->maze_cursor_ghost.x = gfx->maze_cursor.x;
-	gfx->maze_cursor_ghost.y = gfx->maze_cursor.y;
-	gfx->maze_cursor_ghost.w = gfx->maze_cursor.w;
-	gfx->maze_cursor_ghost.h = gfx->maze_cursor.h;
+	gfx->cursor_ghost.x = gfx->cursor.x;
+	gfx->cursor_ghost.y = gfx->cursor.y;
+	gfx->cursor_ghost.w = gfx->cursor.w;
+	gfx->cursor_ghost.h = gfx->cursor.h;
 }
 
 // Highlight the maze at where the user's mouse is hovering	
-void GFX_DrawMazeCursorGhost(GFX* gfx, Mouse* mouse){
-	printf("Drawing maze cursor ghost\n");
+void GFX_RenderCursorGhost(GFX* gfx, Mouse* mouse){
 	SDL_SetRenderDrawColor(gfx->renderer, 
 			gfx->maze_colors.cursor_ghost.r,
 			gfx->maze_colors.cursor_ghost.g,
 			gfx->maze_colors.cursor_ghost.b,
 			gfx->maze_colors.cursor_ghost.a);
-	SDL_RenderFillRect(gfx->renderer, &gfx->maze_cursor_ghost);
+	SDL_RenderFillRect(gfx->renderer, &gfx->cursor_ghost);
 }
 
 

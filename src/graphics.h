@@ -5,15 +5,17 @@
 #include "maze.h"
 
 typedef struct GFX GFX;
-// MazeColors maze_colors;
-// SDL_Window* window;
-// SDL_Surface* window_surface; // TODO: Unused, maybe remove this
-// SDL_Renderer* renderer;
-// SDL_Texture* texture;
-// SDL_Rect maze_cursor;
-// SDL_Rect maze_cursor_ghost;
-// SDL_Rect player;
-// TTF_Font* font; // unused fonts for now
+/* GFX members
+	MazeColors maze_colors; 
+	SDL_Window* window;
+	SDL_Surface* window_surface; // TODO: Unused, maybe remove this
+	SDL_Renderer* renderer;
+	SDL_Texture* texture;
+	SDL_Rect cursor;
+	SDL_Rect cursor_ghost;
+	SDL_Rect player;
+	TTF_Font* font; // unused fonts for now
+ */
 							
 SDL_Cursor* GFX_InitCursor(const char *image[]);
 
@@ -31,9 +33,8 @@ void GFX_InitMazeCursor(GFX* gfx);
 // Initialize Maze Cursor ghost
 void GFX_InitMazeCursorGhost(GFX* gfx);
 
-// Set Maze Cursor 
 void GFX_SetMazeCursor(GFX* gfx, SDL_Event event);
-void GFX_DrawMaze(GFX* gfx, Maze* maze);
-void GFX_DrawMazeCursorGhost(GFX* gfx, Mouse* mouse);
+void GFX_RenderMaze(GFX* gfx, Maze* maze);
+void GFX_RenderCursorGhost(GFX* gfx, Mouse* mouse);
 
 #endif // GRAPHICS_H
