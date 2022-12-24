@@ -1,14 +1,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include <SDL2/SDL_scancode.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-
 #include "global_declarations.h"
 
-typedef struct Mouse Mouse;
+void InputHandler(GFX* gfx, Mouse* mouse, Grid* grid, bool* is_running, SDL_Event event);
 
 Mouse* Mouse_Init();
 void Mouse_UpdatePos(Mouse* mouse);

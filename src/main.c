@@ -1,72 +1,39 @@
-#include <stdbool.h>
-
+#include "global_declarations.h"
 #include "input.h"
 #include "graphics.h"
 #include "maze.h"
 #include "grid.h"
 
-#include "global_declarations.h"
-
 void gameLoop(GFX* gfx, bool* is_running){
 	// Initialize everything
 	Grid* grid = Grid_Init();
 	Mouse* mouse = Mouse_Init();
+	Grid_SetPlayerStart(grid);
+
 	SDL_Cursor* cursor = GFX_InitCursor(cursor_img);
 	SDL_SetCursor(cursor);
 
 	GFX_ClearScreen(gfx);
 	GFX_SetGridTheme(gfx);
+
+	Grid_SetPlayer(grid);
+
 	// Game loop
 	while (is_running){
 		GFX_ClearScreen(gfx);
 		GFX_DrawGrid(gfx, grid);
 		SDL_Event event;
 		while (SDL_PollEvent(&event)){
-			switch(event.type){
-				case SDL_KEYDOWN:
-					switch(event.key.keysym.sym){
-						case SDLK_ESCAPE:
-							GFX_CleanQuit(gfx, true);
-							break;
-					}
-					break;
-				case SDL_MOUSEMOTION:
-					Mouse_UpdatePos(mouse);
-					GFX_SetGridCursorGhost(gfx, event);
-					if (!mouse->active){
-						mouse->active = SDL_TRUE;
-					}
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-				{
-					Mouse_PrintGridPos(mouse);
-					Grid_SetWall(grid, mouse);
-					break;
-				}
-				case SDL_WINDOWEVENT:
-					if (event.window.event == SDL_WINDOWEVENT_ENTER && !mouse->hover)
-						mouse->hover = SDL_TRUE;
-					else if (event.window.event == SDL_WINDOWEVENT_LEAVE &&mouse->hover)
-						mouse->hover = SDL_FALSE;
-					break;
-				case SDL_QUIT:
-					is_running = false;
-					GFX_CleanQuit(gfx, true);
-					break;
-				default:
-					break;
-			}
+			InputHandler(gfx, mouse, grid, is_running, event);
 		}
-
 		// Highlight the cell in the grid matrix where the mouse is hovering	
 		if (mouse->active && mouse->hover){
 			GFX_DrawGridCursorGhost(gfx);
 		}
-
 		SDL_RenderPresent(gfx->renderer);
+		// Grid_Print(grid);
 	}	
 }
-
 
 int main(){
 	bool is_running = true;
@@ -74,8 +41,10 @@ int main(){
 		fprintf(stderr, "Fatal error: Failed to initialize SDL: %s\n", SDL_GetError());
 		exit(EXIT_SUCCESS);
 	}
-
 	GFX* gfx = GFX_Init();
+
+	// But can it blend? (Allows for transparent rendering)
+	SDL_SetRenderDrawBlendMode(gfx->renderer, SDL_BLENDMODE_BLEND);
 
 	gameLoop(gfx, &is_running);	
 	

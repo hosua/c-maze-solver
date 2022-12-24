@@ -126,8 +126,9 @@ void GFX_SetGridTheme(GFX* gfx){
 	// Dark theme
 	GFX_SetSDLColor(22,22,22,255, &gfx->grid_colors.bg);
 	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors.line); 
-	GFX_SetSDLColor(44,44,44,255, &gfx->grid_colors.cursor_ghost); 
+	GFX_SetSDLColor(44,44,44,125, &gfx->grid_colors.cursor_ghost); 
 	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors.cursor);
+	GFX_SetSDLColor(20,105,175,255, &gfx->grid_colors.player);
 	GFX_SetSDLColor(255,255,255,255, &gfx->grid_colors.wall);
 }
 
@@ -156,13 +157,12 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 		SDL_RenderDrawLine(gfx->renderer, 0, y, SCREEN_X, y);
 	}
 
-
 	SDL_Rect grid_wall_rects[GRID_WIDTH*GRID_HEIGHT];
 	int ent_rects_count = 0;
 	// Gather everything on the grid matrix into wall rect array
 	for (int y = 0; y < GRID_HEIGHT; y++){
 		for (int x = 0; x < GRID_WIDTH; x++){
-			GridEntity ent = grid->mat[y][x];
+			GridEntity ent = grid->matrix[y][x];
 			switch(ent){
 				case G_NONE:
 					break;
@@ -178,7 +178,18 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 					break;
 				}
 				case G_PLAYER:
+				{
+					gfx->player.x = (x * GRID_CELL_SIZE);
+					gfx->player.y = (y * GRID_CELL_SIZE);
+					gfx->player.w = GRID_CELL_SIZE;
+					gfx->player.h = GRID_CELL_SIZE;
+					// Render the player
+					SDL_SetRenderDrawColor(gfx->renderer, 
+							gfx->grid_colors.player.r, gfx->grid_colors.player.g, gfx->grid_colors.player.b,
+							gfx->grid_colors.player.a);
+					SDL_RenderFillRect(gfx->renderer, &gfx->player);
 					break;
+				}
 				default:
 					break;
 			}
@@ -190,6 +201,7 @@ void GFX_DrawGrid(GFX* gfx, Grid* grid){
 			gfx->grid_colors.wall.r, gfx->grid_colors.wall.g, gfx->grid_colors.wall.b,
 			gfx->grid_colors.wall.a);
 	SDL_RenderFillRects(gfx->renderer, grid_wall_rects, ent_rects_count);
+
 }
 
 // Set Grid Cursor's initial state

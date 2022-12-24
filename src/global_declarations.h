@@ -7,9 +7,13 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <stdbool.h>
+
+// Note to self: when redefining macros you must recompile everything, 
+// otherwise weird shit happens.
 #define GRID_CELL_SIZE 36
-#define GRID_WIDTH 10
-#define GRID_HEIGHT 10
+#define GRID_WIDTH 20
+#define GRID_HEIGHT 20
 #define SCREEN_X (GRID_WIDTH * GRID_CELL_SIZE) + 1
 #define SCREEN_Y (GRID_HEIGHT * GRID_CELL_SIZE) + 1
 
@@ -23,6 +27,7 @@ typedef struct Mouse {
 	Coord grid_pos; // position on the grid
 	SDL_bool active;
 	SDL_bool hover;
+	SDL_bool is_down; // true while mouse button is held down
 } Mouse;
 
 typedef struct GridColors {
@@ -34,6 +39,29 @@ typedef struct GridColors {
 	SDL_Color wall;
 } GridColors;
 
+// Types of entities on the grid
+typedef enum GridEntity {
+	G_NONE,
+	G_WALL,
+	G_PLAYER,
+} GridEntity;
+
+typedef enum PlayerMove {
+	P_UP,
+	P_DOWN,
+	P_LEFT,
+	P_RIGHT
+} PlayerMove;
+
+typedef struct Player {
+	Coord pos; // player's postion on grid
+} Player;
+
+typedef struct Grid {
+	GridEntity matrix[GRID_HEIGHT][GRID_WIDTH];	
+	Player player;
+} Grid;
+
 typedef struct GFX {
 	GridColors grid_colors;
 	SDL_Window* window;
@@ -42,6 +70,7 @@ typedef struct GFX {
 	SDL_Texture* texture;
 	SDL_Rect grid_cursor;
 	SDL_Rect grid_cursor_ghost;
+	SDL_Rect player;
 	TTF_Font* font; // unused fonts for now
 } GFX;
 

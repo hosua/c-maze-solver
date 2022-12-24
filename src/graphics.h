@@ -1,9 +1,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include "stdbool.h"
-#include "grid.h"
 #include "global_declarations.h"
+#include "grid.h"
 							
 SDL_Cursor* GFX_InitCursor(const char *image[]);
 
