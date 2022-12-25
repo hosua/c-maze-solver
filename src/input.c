@@ -30,6 +30,21 @@ Coord Mouse_GetMazePos(Mouse* mouse){
 	return mouse->maze_pos;
 }
 
+// returns raw mouse position
+Coord Mouse_GetPos(Mouse* mouse){
+	return mouse->pos;
+}
+
+bool Mouse_IsInWindow(Mouse* mouse, SDL_Window* window){
+	Coord pos = Mouse_GetPos(mouse);
+	Coord boundary;
+	SDL_GetWindowSize(window, &boundary.x, &boundary.y);
+	if (pos.x < 0 || pos.y < 0 || pos.x > boundary.x || pos.y > boundary.y)
+		return false;
+	// printf("Window size: %ix%i\n", boundary.x, boundary.y);
+	return true;
+}
+
 void Mouse_SetCursorGhost(GFX* gfx, SDL_Event event){
 	// set the cursor ghost to mouse position
 	gfx->cursor_ghost.x = (event.motion.x / GRID_CELL_SIZE) * GRID_CELL_SIZE;
@@ -94,7 +109,9 @@ void InputHandler(GFX* gfx, Mouse* mouse, Maze* maze, bool* is_running, SDL_Even
 		default:
 			break;
 	}
-	if (mouse->is_down){
+
+	if (mouse->is_down && Mouse_IsInWindow(mouse, gfx->window)){
+		Mouse_PrintPos(mouse);
 		// Mouse_PrintMazePos(mouse);
 		switch(event.button.button){
 			case SDL_BUTTON_LEFT:

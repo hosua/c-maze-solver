@@ -33,7 +33,7 @@ void gameLoop(GFX* gfx, bool* is_running){
 			GFX_RenderCursorGhost(gfx, mouse);
 		}
 		SDL_RenderPresent(gfx->renderer);
-		Maze_Print(maze); // For debugging 
+		// Maze_Print(maze); // For debugging 
 	}	
 }
 

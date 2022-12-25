@@ -12,5 +12,8 @@ void Mouse_PrintMazePos(Mouse* mouse);
 void Mouse_SetCursorGhost(GFX* gfx, SDL_Event event);
 
 Coord Mouse_GetMazePos(Mouse* mouse);
+Coord Mouse_GetPos(Mouse* mouse);
+
+bool Mouse_IsInWindow(Mouse* mouse, SDL_Window* window);
 
 #endif // INPUT_H
